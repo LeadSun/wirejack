@@ -1,5 +1,6 @@
 mod app_state;
 mod http;
+pub use http::{Body as HttpBody, HttpRequest, HttpResponse, PyHttpRequest, PyHttpResponse};
 mod python;
 
 use crate::http::proxy::TlsConfig;
