@@ -32,6 +32,10 @@ impl AppState {
         }
     }
 
+    pub fn handler_tx(&self) -> watch::Sender<Arc<Py<PyAny>>> {
+        self.handler_tx.clone()
+    }
+
     pub async fn call_handler(&self, request: HttpRequest) -> PyResult<HttpResponse> {
         let handler = self.handler_rx.borrow().clone();
         let result = Python::attach(|py| {

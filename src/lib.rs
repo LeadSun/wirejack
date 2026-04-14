@@ -1,4 +1,5 @@
 mod app_state;
+mod hot_reload;
 mod http;
 pub use http::{Body as HttpBody, HttpRequest, HttpResponse, PyHttpRequest, PyHttpResponse};
 mod python;
@@ -36,6 +37,8 @@ pub fn proxy_http(config: HttpConfig) {
         let forwarder = proxy::make_client(config.proxy.clone());
         let state = AppState::new(load_handler(&config.handler)?, forwarder.clone());
         let task_locals = Python::attach(pyo3_async_runtimes::tokio::get_current_locals)?;
+        let _handler_watch = hot_reload::watch(state.handler_tx(), config.handler.clone())
+            .expect("Failed to start hot reloader.");
 
         let mut proxies = JoinSet::new();
         let tls = TlsConfig::new(&PathBuf::from(format!(
